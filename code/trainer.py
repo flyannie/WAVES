@@ -72,13 +72,10 @@ class trainer:
                 weight = self.get_current_consistency_weight(epoch)
                 consistent_loss = sim_consistent_loss + weight * real_consistent_loss
 
-                t_space_loss_t2 = self.loss(t_s_outs[0][:,0:1,:,:], t2_8) + self.loss(t_s_outs[1][:,0:1,:,:], t2_4) + self.loss(t_s_outs[2][:,0:1,:,:], t2_2) + self.loss(t_s_outs[3][:,0:1,:,:], t2) 
-                t_space_loss_adc = self.loss(t_s_outs[0][:,1:2,:,:], adc_8) + self.loss(t_s_outs[1][:,1:2,:,:], adc_4) + self.loss(t_s_outs[2][:,1:2,:,:], adc_2) + self.loss(t_s_outs[3][:,1:2,:,:], adc) 
-
                 s_space_loss_t2 = self.loss(s_s_outs[0][:,0:1,:,:], t2_8) + self.loss(s_s_outs[1][:,0:1,:,:], t2_4) + self.loss(s_s_outs[2][:,0:1,:,:], t2_2) + self.loss(s_s_outs[3][:,0:1,:,:], t2) 
                 s_space_loss_adc = self.loss(s_s_outs[0][:,1:2,:,:], adc_8) + self.loss(s_s_outs[1][:,1:2,:,:], adc_4) + self.loss(s_s_outs[2][:,1:2,:,:], adc_2) + self.loss(s_s_outs[3][:,1:2,:,:], adc) 
 
-                space_loss = t_space_loss_t2 + t_space_loss_adc + s_space_loss_t2 + s_space_loss_adc
+                space_loss = s_space_loss_t2 + s_space_loss_adc
 
                 fft_t2_8 = torch.fft.fft2(t2_8, dim=(-2,-1))
                 fft_t2_8 = torch.stack((fft_t2_8.real, fft_t2_8.imag), -1)
@@ -136,12 +133,10 @@ class trainer:
                 s_fft_out_adc = torch.fft.fft2(s_s_outs[3][:,1:2,:,:], dim=(-2,-1))
                 s_fft_out_adc = torch.stack((s_fft_out_adc.real, s_fft_out_adc.imag), -1)
 
-                t_fft_loss_t2 = self.loss(t_fft_out_8 ,fft_t2_8) + self.loss(t_fft_out_4 ,fft_t2_4) + self.loss(t_fft_out_2 ,fft_t2_2) + self.loss(t_fft_out ,fft_t2) 
                 s_fft_loss_t2 = self.loss(s_fft_out_8 ,fft_t2_8) + self.loss(s_fft_out_4 ,fft_t2_4) + self.loss(s_fft_out_2 ,fft_t2_2) + self.loss(s_fft_out ,fft_t2) 
-                t_fft_loss_adc = self.loss(t_fft_out_8_adc ,fft_adc_8) + self.loss(t_fft_out_4_adc ,fft_adc_4) + self.loss(t_fft_out_2_adc ,fft_adc_2) + self.loss(t_fft_out_adc ,fft_adc) 
                 s_fft_loss_adc = self.loss(s_fft_out_8_adc ,fft_adc_8) + self.loss(s_fft_out_4_adc ,fft_adc_4) + self.loss(s_fft_out_2_adc ,fft_adc_2) + self.loss(s_fft_out_adc ,fft_adc) 
 
-                fft_loss = t_fft_loss_t2 + s_fft_loss_t2 + t_fft_loss_adc + s_fft_loss_adc
+                fft_loss = s_fft_loss_t2 + s_fft_loss_adc
 
                 consistent_loss_avg += consistent_loss
                 space_loss_avg += space_loss
